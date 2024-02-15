@@ -5,7 +5,8 @@ class Play extends Phaser.Scene {
 
     preload() {
         this.load.audio('Select',"./assets/Select.wav")
-        
+        this.load.image('player',"./assets/player.png")
+        this.load.image('Pedal',"./assets/pedal.png")
     }
 
     create() {
@@ -19,15 +20,34 @@ class Play extends Phaser.Scene {
         this.BG = this.add.tileSprite(0,0,900,480,'BG').setOrigin(0,0)
         keyRight = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT)
         keySpace = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE)
-        this.player = new Player(this,200,200).setOrigin(0,0)
+        keyLeft = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT)
+        this.player = new Player(this,200,200,'player').setOrigin(0,0)
+        this.pedals = []
+        for (let i = 0; i < 4; i++) {
+            this.createPedal(i);
+        }
+        this.physics.add.collider(this.player, this.pedals);
+
     }
 
     update() {
         this.player.update()
-        this.BG.tilePositionX += 0.3
+        this.pedals.forEach(pedal => pedal.update())
+        if (keyRight.isDown) {
+            this.BG.tilePositionX += 0.5;
+        }
+        if (keyLeft.isDown) {
+            this.BG.tilePositionX -= 0.5;
+        }
         if (Phaser.Input.Keyboard.JustDown(keyB)) {
             this.sound.play('Select')
             this.scene.start('menuScene');
         }
+    }
+    createPedal(index) {
+        const x = this.sys.game.config.width + index * 150; 
+        const y = Phaser.Math.Between(this.sys.game.config.height / 2, this.sys.game.config.height - 100); 
+        const pedal = new Pedal(this, x, y, 'Pedal');
+        this.pedals.push(pedal);
     }
 }

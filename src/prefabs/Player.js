@@ -4,10 +4,12 @@ class Player extends Phaser.GameObjects.Sprite {
         scene.add.existing(this);
         scene.physics.add.existing(this);
         this.body.setCollideWorldBounds(true);
-        this.playerSpeed = 150; 
-        this.jumpSpeed = 300;
+        this.playerSpeed = 75; 
+        this.jumpSpeed = 200;
         this.keyRight = keyRight;
         this.keySpace = keySpace;
+        this.keyLeft = keyLeft;
+
         this.body.setGravityY(300);
         this.body.setDragX(200); 
     }
@@ -18,8 +20,14 @@ class Player extends Phaser.GameObjects.Sprite {
             this.body.setVelocityX(this.playerSpeed);
         }
 
-       
-        if (Phaser.Input.Keyboard.JustDown(this.keySpace)&& this.body.touching.down) {
+
+        if (this.keyLeft.isDown) {
+            this.body.setVelocityX(-this.playerSpeed);
+        }
+        
+
+       //&& this.body.touching.down
+        if (Phaser.Input.Keyboard.JustDown(this.keySpace)) {
             this.body.setVelocityY(-this.jumpSpeed);
         }
 

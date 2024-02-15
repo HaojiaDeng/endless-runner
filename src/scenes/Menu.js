@@ -7,7 +7,8 @@ class Menu extends Phaser.Scene {
     preload() {
         this.load.audio('Select',"./assets/Select.wav")
         this.load.image('BG',"./assets/Bg.png")
-        this.load.image('Player',"./assets/Player.png")
+
+        this.load.image('Pedal',"./assets/pedal.png")
     }
 
     create() {

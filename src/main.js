@@ -15,5 +15,5 @@ let game = new Phaser.Game(config)
 
 
 
-let keyH, keyB, keyP, keyRight, keySpace
+let keyH, keyB, keyP, keyRight, keySpace, keyLeft
 
