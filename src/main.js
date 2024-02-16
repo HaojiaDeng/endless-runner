@@ -29,7 +29,8 @@ for example, the lightning in the game will keep appearing at an accelerated rat
 And then the position of the pedals is also completely randomized.
 That two are technically interesting to me.
 In addition, I experimented with the camera shake effect
-to increase the immersion of the player`
+to increase the immersion of the player
+If you need to cheat in this game,please go to Player.js to see  the details`
 
 
 
