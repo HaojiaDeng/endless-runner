@@ -13,6 +13,7 @@ class Menu extends Phaser.Scene {
         this.load.image('Lightning',"./assets/Lightning.png")
         this.load.image('Pedal',"./assets/pedal.png")
         this.load.image('Coin',"./assets/coin.png")
+        this.load.image('Spike',"./assets/Spike.png")
     }
 
     create() {

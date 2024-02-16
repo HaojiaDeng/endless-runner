@@ -22,7 +22,8 @@ class Player extends Phaser.GameObjects.Sprite {
             this.body.setVelocityX(0);
         }
         if (Phaser.Input.Keyboard.JustDown(this.keySpace)) {
-            this.body.setVelocityY(-this.jumpSpeed);
+            this.body.setVelocityY(-this.jumpSpeed)
+            this.scene.handlePedal2AfterJump()
         }
     }
 }

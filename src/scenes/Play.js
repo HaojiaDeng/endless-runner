@@ -9,13 +9,14 @@ class Play extends Phaser.Scene {
         this.load.image('player', "./assets/player.png")
         this.load.image('Pedal', "./assets/pedal.png")
         this.load.image('Coin', "./assets/coin.png")
+        this.load.image('Spike',"./assets/Spike.png")
         this.load.audio('Fail',"./assets/Fail.wav")
     }
 
     create() {
         let menuConfig = {
             fontFamily: "Courier",
-            fontSize: "32px",
+            fontSize: "16px",
             color: "#ffffff"
         };
         keyB = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.B);
@@ -25,11 +26,14 @@ class Play extends Phaser.Scene {
         keyLeft = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT)
         keyR = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R)
         this.player = new Player(this, 200, 200, 'player').setOrigin(0, 0)
+        this.pedal2 = new Pedal2(this,220,250,'Pedal').setOrigin(0, 0)
+        this.Spike = new Deadline(this,0, 460, 'Spike').setOrigin(0, 0)
         this.pedals = []
         for (let i = 0; i < 7; i++) {
             this.createPedal(i);
         }
         this.physics.add.collider(this.player, this.pedals);
+        this.physics.add.collider(this.player, this.pedal2);
         //this.physics.add.collider(this.player, this.lightnings);
         this.lightnings = this.add.group();
         this.timedEvent = this.time.addEvent({
@@ -51,7 +55,13 @@ class Play extends Phaser.Scene {
             this.sound.play('Fail')
             this.player.setActive(false).setVisible(false);
             this.surviveTimeText.setText('You Survived : ' + (this.surviveTime / 1000).toFixed(0) + 's')
-            this.add.text(this.cameras.main.centerX, this.cameras.main.centerY + 64, 'Game Over!Press (R) to Restart', menuConfig).setOrigin(0.5);
+            this.add.text(this.cameras.main.centerX, this.cameras.main.centerY + 64, 'Game Over!Press (R) to Restart or (B) to get to Menu', menuConfig).setOrigin(0.5);
+        });
+        this.physics.add.overlap(this.player, this.Spike, () => {
+            this.gameOver = true;
+            this.player.setActive(false).setVisible(false);
+            this.surviveTimeText.setText('You Survived : ' + (this.surviveTime / 1000).toFixed(0) + 's')
+            this.add.text(this.cameras.main.centerX, this.cameras.main.centerY + 64, 'Game Over!Press (R) to Restart or (B) to get to Menu', menuConfig).setOrigin(0.5);
         });
         this.surviveTimeText = this.add.text(16, 16, 'TimeSurvived: 0 second(s)', {
             fontFamily: 'Courier',
@@ -80,8 +90,13 @@ class Play extends Phaser.Scene {
             this.surviveTime = 0
 
         }
+        if (this.gameOver && Phaser.Input.Keyboard.JustDown(keyB)) {
+            this.sound.play('Select')
+            this.scene.start('menuScene')
+        }
         if (!this.gameOver) {
             this.player.update();
+
             this.surviveTime += delta
             this.surviveTimeText.setText('TimeSurvived: ' + (this.surviveTime / 1000).toFixed(0)+'S')
             this.pedals.forEach(pedal => pedal.update());
@@ -154,5 +169,12 @@ class Play extends Phaser.Scene {
         const y = Phaser.Math.Between(240, this.sys.game.config.height / 2);
         const coin = new Coin(this, x, y, 'Coin');
         this.coins.add(coin);
+    }
+
+    handlePedal2AfterJump() {
+        if (this.pedal2) {
+            this.pedal2.destroy()
+            this.pedal2 = null
+        }
     }
 }
