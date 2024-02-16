@@ -6,9 +6,13 @@ class Menu extends Phaser.Scene {
 
     preload() {
         this.load.audio('Select',"./assets/Select.wav")
+        this.load.audio('Pickup',"./assets/pickupCoin.wav")
+        this.load.audio('Lightning',"./assets/explosion.wav")
         this.load.image('BG',"./assets/Bg.png")
-
+        this.load.image('warning',"./assets/warning.png")
+        this.load.image('Lightning',"./assets/Lightning.png")
         this.load.image('Pedal',"./assets/pedal.png")
+        this.load.image('Coin',"./assets/coin.png")
     }
 
     create() {
