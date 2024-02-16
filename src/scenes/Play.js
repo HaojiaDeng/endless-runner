@@ -13,7 +13,7 @@ class Play extends Phaser.Scene {
     create() {
         let menuConfig = {
             fontFamily: "Courier", 
-            fontSize: "64px",
+            fontSize: "32px",
             color: "#ffffff" 
         };
         keyB = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.B);
@@ -21,6 +21,7 @@ class Play extends Phaser.Scene {
         keyRight = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT)
         keySpace = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE)
         keyLeft = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT)
+        keyR = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R)
         this.player = new Player(this,200,200,'player').setOrigin(0,0)
         this.pedals = []
         for (let i = 0; i < 4; i++) {
@@ -35,7 +36,6 @@ class Play extends Phaser.Scene {
             callbackScope: this,
             loop: true
         });
-
         this.time.addEvent({
             delay: 20000, 
             callback: this.createCoin,
@@ -43,41 +43,53 @@ class Play extends Phaser.Scene {
             loop: true
         })
         this.coins = this.physics.add.group()
+        this.gameOver = false
+        this.physics.add.overlap(this.player, this.lightnings, () => {
+        this.gameOver = true; 
+        this.player.setActive(false).setVisible(false); 
+        this.add.text(this.cameras.main.centerX, this.cameras.main.centerY, 'GAME OVER', menuConfig).setOrigin(0.5)
+        this.add.text(this.cameras.main.centerX, this.cameras.main.centerY + 64, 'Press (R) to Restart', menuConfig).setOrigin(0.5);
+    });
+}
 
-    }
+    
 
-    update() {
-        this.player.update()
-        this.pedals.forEach(pedal => pedal.update())
+
+update() {
+    if (this . gameOver  &&Phaser.Input.Keyboard.JustDown(keyR)) {
+        this.scene.restart();
+        }
+    if (!this.gameOver) {
+        this.player.update();
+        this.pedals.forEach(pedal => pedal.update());
         if (keyRight.isDown) {
             this.BG.tilePositionX += 0.5;
         }
         if (keyLeft.isDown) {
             this.BG.tilePositionX -= 0.5;
         }
-        if (Phaser.Input.Keyboard.JustDown(keyB)) {
-            this.sound.play('Select')
-            this.scene.start('menuScene');
-        }
-
-        this.physics.add.overlap(this.player, this.lightnings, (player, lightning) => {
-            this.scene.start('menuScene')
-        })
 
         this.coins.getChildren().forEach(coin => {
-            coin.x -= 2
+            coin.x -= 2;
             if (coin.x < -coin.width) {
-                coin.destroy()
+                coin.destroy();
             }
-        })
-    
+        });
+
         this.physics.add.overlap(this.player, this.coins, (player, coin) => {
-            this.sound.play('Pickup')
-            coin.destroy()
-        })
-        
+            this.sound.play('Pickup');
+            coin.destroy();
+        });
+    } 
         
     }
+
+
+
+        
+        
+        
+    
     createPedal(index) {
         const xSpacing = 200; 
         const x = this.sys.game.config.width + index * xSpacing; 
@@ -109,6 +121,4 @@ class Play extends Phaser.Scene {
         const coin = new Coin(this, x, y, 'Coin'); 
         this.coins.add(coin);
     }
-    
 }
-
