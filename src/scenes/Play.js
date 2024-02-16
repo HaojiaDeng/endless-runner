@@ -7,7 +7,7 @@ class Play extends Phaser.Scene {
         this.load.audio('Select',"./assets/Select.wav")
         this.load.image('player',"./assets/player.png")
         this.load.image('Pedal',"./assets/pedal.png")
-        this.load.image('Coin', "./assets/coin.png")
+        this.load.image('Coin', "./assets/Coin.png")
     }
 
     create() {
@@ -42,7 +42,7 @@ class Play extends Phaser.Scene {
             callbackScope: this,
             loop: true
         })
-        this.coins = this.physics.add.group()
+        this.Coins = this.physics.add.group()
 
     }
 
@@ -64,16 +64,16 @@ class Play extends Phaser.Scene {
             this.scene.start('menuScene')
         })
 
-        this.coins.getChildren().forEach(coin => {
-            coin.x -= 2
-            if (coin.x < -coin.width) {
-                coin.destroy()
+        this.Coins.getChildren().forEach(Coin => {
+            Coin.x -= 2
+            if (Coin.x < -Coin.width) {
+                Coin.destroy()
             }
         })
     
-        this.physics.add.overlap(this.player, this.coins, (player, coin) => {
+        this.physics.add.overlap(this.player, this.Coins, (player, Coin) => {
             this.sound.play('Pickup')
-            coin.destroy()
+            Coin.destroy()
         })
         
         
@@ -106,8 +106,8 @@ class Play extends Phaser.Scene {
     createCoin() {
         const x = this.sys.game.config.width + Phaser.Math.Between(50, 150); 
         const y = Phaser.Math.Between(240, this.sys.game.config.height / 2); 
-        const coin = new Coin(this, x, y, 'Coin'); 
-        this.coins.add(coin);
+        const Coin = new Coin(this, x, y, 'Coin'); 
+        this.Coins.add(Coin);
     }
     
 }
