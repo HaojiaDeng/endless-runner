@@ -28,7 +28,6 @@ class Play extends Phaser.Scene {
             this.createPedal(i);
         }
         this.physics.add.collider(this.player, this.pedals);
-        this.physics.add.collider(this.player, this.lightnings);
         this.lightnings = this.add.group();
         this.timedEvent = this.time.addEvent({
             delay: 15000, 
