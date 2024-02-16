@@ -11,6 +11,7 @@ class Play extends Phaser.Scene {
         this.load.image('Coin', "./assets/coin.png")
         this.load.image('Spike',"./assets/Spike.png")
         this.load.audio('Fail',"./assets/Fail.wav")
+        this.load.audio('BGM',"./assets/BGM.wav")
     }
 
     create() {
@@ -29,7 +30,7 @@ class Play extends Phaser.Scene {
         this.pedal2 = new Pedal2(this,220,250,'Pedal').setOrigin(0, 0)
         this.Spike = new Deadline(this,0, 460, 'Spike').setOrigin(0, 0)
         this.pedals = []
-        for (let i = 0; i < 7; i++) {
+        for (let i = 0; i < 12; i++) {
             this.createPedal(i);
         }
         this.physics.add.collider(this.player, this.pedals);
@@ -43,7 +44,7 @@ class Play extends Phaser.Scene {
             loop: true
         });
         this.time.addEvent({
-            delay: 20000,
+            delay: 17000,
             callback: this.createCoin,
             callbackScope: this,
             loop: true
@@ -53,12 +54,14 @@ class Play extends Phaser.Scene {
         this.physics.add.overlap(this.player, this.lightnings, () => {
             this.gameOver = true;
             this.sound.play('Fail')
+            this.music.pause()
             this.player.setActive(false).setVisible(false);
             this.surviveTimeText.setText('You Survived : ' + (this.surviveTime / 1000).toFixed(0) + 's')
             this.add.text(this.cameras.main.centerX, this.cameras.main.centerY + 64, 'Game Over!Press (R) to Restart or (B) to get to Menu', menuConfig).setOrigin(0.5);
         });
         this.physics.add.overlap(this.player, this.Spike, () => {
             this.gameOver = true;
+            this.music.pause()
             this.player.setActive(false).setVisible(false);
             this.surviveTimeText.setText('You Survived : ' + (this.surviveTime / 1000).toFixed(0) + 's')
             this.add.text(this.cameras.main.centerX, this.cameras.main.centerY + 64, 'Game Over!Press (R) to Restart or (B) to get to Menu', menuConfig).setOrigin(0.5);
@@ -71,6 +74,18 @@ class Play extends Phaser.Scene {
 
         this.surviveTime = 0;
         this.lightningFrequency = 15000
+        this.coinCount = 0
+        this.coinCountText = this.add.text(16, 48, 'Coins: 0', {
+            fontFamily: 'Courier',
+            fontSize: '32px',
+            color: '#f08215'
+        }); 
+
+        this.messageText = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY, '', {
+            fontFamily: 'Courier',
+            fontSize: '32px',
+            color: '#F01519'
+        }).setOrigin(0.5);
 
         this.timedEvent = this.time.addEvent({
             delay: this.lightningFrequency,
@@ -78,6 +93,9 @@ class Play extends Phaser.Scene {
             callbackScope: this,
             loop: true
         });
+        this.music = this.sound.add('BGM',0.2,true)
+        this.music.setLoop(true)
+        this.music.play()
     
     }
 
@@ -88,6 +106,7 @@ class Play extends Phaser.Scene {
         if (this.gameOver && Phaser.Input.Keyboard.JustDown(keyR)) {
             this.scene.restart()
             this.surviveTime = 0
+            
 
         }
         if (this.gameOver && Phaser.Input.Keyboard.JustDown(keyB)) {
@@ -117,17 +136,45 @@ class Play extends Phaser.Scene {
             this.physics.add.overlap(this.player, this.coins, (player, coin) => {
                 this.sound.play('Pickup');
                 coin.destroy();
-            });
+                this.coinCount++; 
+                this.coinCountText.setText('Coins: ' + this.coinCount)
+    
+                if (this.coinCount == 2) { 
+                    this.messageText.setText('Congrats!'); 
+    
+                   
+                    this.time.delayedCall(2000, () => {
+                        this.messageText.setText(''); 
+                    });
+                }
 
+                if (this.coinCount == 4) { 
+                    this.messageText.setText('Great!'); 
+    
+                   
+                    this.time.delayedCall(2000, () => {
+                        this.messageText.setText(''); 
+                    });
+                }
+                if (this.coinCount == 4) { 
+                    this.messageText.setText('Wonderful!'); 
+    
+                   
+                    this.time.delayedCall(2000, () => {
+                        this.messageText.setText(''); 
+                    });
+                }
+            });
+        
         }
 
     }
 
     createPedal(index) {
-        const xSpacing = 200;
+        const xSpacing = 100;
         const x = this.sys.game.config.width + index * xSpacing;
-        const minY = this.sys.game.config.height / 2;
-        const maxY = this.sys.game.config.height - 50;
+        const minY = this.sys.game.config.height -50
+        const maxY = 100;
         const y = Phaser.Math.Between(minY, maxY);
         const pedal = new Pedal(this, x, y, 'Pedal');
         this.pedals.push(pedal);
@@ -166,7 +213,7 @@ class Play extends Phaser.Scene {
 
     createCoin() {
         const x = this.sys.game.config.width + Phaser.Math.Between(50, 150);
-        const y = Phaser.Math.Between(240, this.sys.game.config.height / 2);
+        const y = Phaser.Math.Between(this.sys.game.config.height * 0.1, this.sys.game.config.height * 0.9)
         const coin = new Coin(this, x, y, 'Coin');
         this.coins.add(coin);
     }

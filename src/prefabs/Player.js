@@ -7,7 +7,7 @@ class Player extends Phaser.GameObjects.Sprite {
         this.body.setGravityY(300);
         this.body.setDragX(200);
         this.playerSpeed = 75;
-        this.jumpSpeed = 200;
+        this.jumpSpeed = 350;
         this.keyRight = keyRight;
         this.keySpace = keySpace;
         this.keyLeft = keyLeft;
@@ -21,9 +21,28 @@ class Player extends Phaser.GameObjects.Sprite {
         } else {
             this.body.setVelocityX(0);
         }
-        if (Phaser.Input.Keyboard.JustDown(this.keySpace)) {
+    
+
+        if (Phaser.Input.Keyboard.JustDown(this.keySpace) && this.body.touching.down) {
+            this.body.setVelocityY(-this.jumpSpeed);
+            this.scene.handlePedal2AfterJump()
+        }
+    }
+    
+}
+/* if you find the game challenging, change the update() to this:
+ update() {
+        if (this.keyRight.isDown) {
+            this.body.setVelocityX(this.playerSpeed);
+        } else if (this.keyLeft.isDown) {
+            this.body.setVelocityX(-this.playerSpeed);
+        } else {
+            this.body.setVelocityX(0);
+        }
+        if (Phaser.Input.Keyboard.JustDown(this.keySpace && this.body.touching.down)) {
             this.body.setVelocityY(-this.jumpSpeed)
             this.scene.handlePedal2AfterJump()
         }
     }
-}
+this will enable you to jump countless times in the air
+*/
